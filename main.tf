@@ -187,7 +187,7 @@ locals {
     primary_username            = var.primary_username
     primary_user_ssh_public_key = var.primary_user_ssh_public_key
     disable_default_ubuntu_user = var.disable_default_ubuntu_user
-    
+
     # User management (multi-admin users)
     admin_users_json = local.admin_users_json
   })

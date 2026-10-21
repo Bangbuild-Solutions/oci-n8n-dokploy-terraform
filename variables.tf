@@ -142,13 +142,13 @@ variable "admin_users" {
     
     Note: If admin_users is specified, it takes precedence over create_primary_user.
   EOT
-  
+
   type = list(object({
     username = string
     ssh_key  = string
     disabled = optional(bool, false)
   }))
-  
+
   default = []
 
   validation {
@@ -183,7 +183,7 @@ variable "admin_users" {
   }
 
   validation {
-    condition = length(var.admin_users) == length(distinct([for user in var.admin_users : user.username]))
+    condition     = length(var.admin_users) == length(distinct([for user in var.admin_users : user.username]))
     error_message = "Duplicate usernames detected. Each username must be unique."
   }
 }

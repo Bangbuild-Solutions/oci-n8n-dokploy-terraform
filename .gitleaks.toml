@@ -1,0 +1,20 @@
+# Gitleaks configuration for this repository.
+#
+# Extends the default gitleaks ruleset and adds one narrowly-scoped allowlist
+# entry. There are no real secrets in this repo: all credentials are fetched at
+# runtime from Bitwarden Secrets Manager (see get-secrets.sh), never committed.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Documentation-only PEM marker text, not key material"
+# get-secrets.sh validates the *format* of the OCI private key and prints a
+# human-readable error naming the expected PEM header. The literal strings
+# "-----BEGIN PRIVATE KEY-----" / "-----BEGIN RSA PRIVATE KEY-----" appear only
+# as validation-message text and in a bash regex. No key bytes are present.
+# This matches gitleaks' generic "private-key" rule as a false positive.
+regexTarget = "line"
+regexes = [
+  '''It should (start|end) with '-----(BEGIN|END)[^']*PRIVATE KEY-----' ''',
+  '''=~ \^?-----BEGIN\.\*PRIVATE''',
+]
