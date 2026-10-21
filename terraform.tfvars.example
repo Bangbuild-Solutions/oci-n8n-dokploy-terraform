@@ -1,0 +1,84 @@
+# ────────────────────────────────────────────────────────────
+# Example Terraform variables.
+# Copy to terraform.tfvars and replace every placeholder with your values:
+#   cp terraform.tfvars.example terraform.tfvars
+#
+# NOTE: terraform.tfvars is gitignored. Keep your real values out of git.
+# Secrets (OCI private key, tenancy/user OCIDs, fingerprint, Tailscale auth
+# key, Cloudflare tunnel token) are NOT set here. They are fetched at runtime
+# from Bitwarden Secrets Manager. See docs/04-BITWARDEN-SETUP.md.
+#
+# Keep terraform.tfvars small (~1-2KB). Terraform embeds this file's contents
+# into the cloud-init user_data, which OCI caps at 32KB.
+# ────────────────────────────────────────────────────────────
+
+# ── OCI Configuration (non-sensitive) ──
+# The OCI region where resources are created.
+region = "us-ashburn-1"
+# The OCID of the compartment where resources are created.
+compartment_ocid = "ocid1.compartment.oc1..<your-compartment-ocid>"
+
+# ── SSH Configuration ──
+# SSH public key for the initial 'ubuntu' bootstrap user.
+# Generate with: ssh-keygen -t ed25519 -C "you@example.com"
+bootstrap_ssh_public_key = "ssh-ed25519 AAAA... you@example.com"
+
+# ── Tailscale Configuration ──
+# Hostname registered with Tailscale; enables `ssh <user>@<hostname>`.
+tailscale_hostname = "dokploy-server"
+
+# ── System Configuration ──
+# Server timezone (e.g. "America/New_York", "Europe/London", "UTC").
+timezone = "UTC"
+
+# ── Storage Configuration ──
+# Create a separate block volume for Docker data (recommended for production).
+create_docker_volume = true
+# Docker data volume size in GB (50-200; Always Free total block capacity is 200).
+docker_volume_size = 170
+# Block device path for the attached Docker data volume (paravirtualized).
+docker_device = "/dev/oracleoci/oraclevdb"
+
+# ── Instance Configuration ──
+# Display name for the compute instance.
+instance_display_name = "dokploy-server"
+# Boot volume size in GB (20-200 for Always Free).
+boot_volume_size = 50
+# Ubuntu version for the instance image ("24.04", "22.04", or "20.04").
+instance_os_version = "24.04"
+
+# ════════════════════════════════════════════════════════════
+# USER CONFIGURATION — choose ONE of the three options below.
+# ════════════════════════════════════════════════════════════
+
+# ── Option A (recommended): admin users (1 to 10) ──
+# Each user gets passwordless sudo, docker group membership, and SSH-key auth.
+admin_users = [
+  {
+    username = "alice"
+    ssh_key  = "ssh-ed25519 AAAA... alice@example.com"
+  },
+  {
+    username = "bob"
+    ssh_key  = "ssh-ed25519 AAAA... bob@example.com"
+  }
+]
+# Lock the default 'ubuntu' user once admin users are created and verified.
+disable_default_ubuntu_user = true
+
+# ── Option B: ubuntu user only (testing / temporary) ──
+# Leave admin_users = [] above and set:
+#   create_primary_user = false
+#   disable_default_ubuntu_user = false
+
+# ── Option C: single primary user (legacy) ──
+# Leave admin_users = [] above and set:
+#   create_primary_user = true
+#   primary_username = "myuser"
+#   primary_user_ssh_public_key = "ssh-ed25519 AAAA... myuser@example.com"
+#   disable_default_ubuntu_user = true
+
+# Legacy single-user defaults (leave as-is unless using Option C).
+create_primary_user         = false
+primary_username            = ""
+primary_user_ssh_public_key = ""

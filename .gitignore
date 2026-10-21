@@ -1,0 +1,54 @@
+# Terraform files
+*.tfstate
+*.tfstate.*
+*.tfvars
+!terraform.tfvars.example
+.terraform/
+.terraform.lock.hcl
+terraform.tfplan
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Sensitive files
+.oci_private_key.pem
+*.pem
+*.key
+*-key.json
+*-connection-info.txt
+
+# Verification logs
+verification-safe.log
+verification-full.log
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+
+# Backup files
+*.backup
+*.bak
+*.old
+*~
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# local reference file created on the server after deployment
+*-connection-info.txt
